@@ -1,0 +1,42 @@
+NIGHT SHIFT 0.7.1 - Windows x64
+
+Codex e Claude Code em um aplicativo. O seletor de provedor fica no topo;
+Claro/Escuro é independente. A janela slim do gato acompanha a mesma sessão
+e não cria uma segunda tarefa.
+
+ATUALIZAR
+Feche o app, faça backup e substitua somente NightShift.exe na pasta atual.
+Mantenha Dados, nightshift.portable e o caminho da instalação.
+
+INSTALAÇÃO NOVA
+1. Extraia o ZIP completo e abra NightShift.exe.
+2. Selecione Codex ou Claude e a plataforma; conecte e escolha a sessão.
+3. Escreva uma tarefa e envie. Ctrl+Enter também envia.
+4. Use o painel slim para acompanhar sessões existentes e voltar ao app.
+
+REQUISITOS
+Codex CLI instalado e autenticado. Para Claude, Claude Code local instalado
+e autenticado, versão nativa >= 2.1.234. Não conecta ao Claude em chat normal
+ou Cowork. Recursos da CLI Claude variam por versão; confira `claude agents
+--help` antes de depender de listagem de sessões externas.
+
+O app gerenciado usa sinais estruturados para limites; ausência de percentuais
+e horários aparece como “Não informado”. Só uma tarefa Claude interrompida
+por limite pode ser retomada automaticamente. Erros comuns, conclusão,
+perguntas e recusas não retomam. Sessões externas Claude são observadas;
+Anexar abre o terminal nativo. O app não assume controle do transcript vivo.
+
+ANEXOS E ATALHOS
+Use +, Ctrl+V ou arraste arquivos. Até 10 anexos de 25 MB por mensagem.
+Ctrl+K abre Ações; F1 abre comandos; Esc fecha o painel de limites ou para
+o trabalho. Os originais dos anexos não são modificados.
+
+DESKTOP / VS CODE
+O conector Codex compartilhado é experimental e requer acesso ao mesmo
+app-server local. Selecionar a plataforma não conecta um backend privado.
+Desconectar o observador não para o outro cliente.
+
+ARQUIVOS E FONTES
+O ZIP inclui executável Windows x64 com runtime, documentação e fontes.
+Não publique Dados, credenciais ou logs pessoais. Consulte Manual.md,
+COMPATIBILITY.md, VALIDATION.md e CONTRIBUTING-AGENTS.md.
