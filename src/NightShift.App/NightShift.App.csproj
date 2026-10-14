@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+<PropertyGroup>
+<OutputType>WinExe</OutputType><TargetFramework>net10.0-windows</TargetFramework><UseWPF>true</UseWPF>
+<EnableWindowsTargeting>true</EnableWindowsTargeting><AssemblyName>NightShift</AssemblyName>
+<ApplicationIcon>Assets/night-shift.ico</ApplicationIcon><ApplicationManifest>app.manifest</ApplicationManifest>
+<RuntimeFrameworkVersion>10.0.12</RuntimeFrameworkVersion><Company>Night Shift</Company><Product>Night Shift</Product>
+<Description>Seu projeto continua. Você descansa.</Description>
+</PropertyGroup>
+<ItemGroup><ProjectReference Include="../NightShift.Core/NightShift.Core.csproj"/><Resource Include="Assets/night-shift.png"/><Resource Include="Assets/night-shift.ico"/></ItemGroup>
+</Project>

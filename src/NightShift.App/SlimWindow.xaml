@@ -1,0 +1,121 @@
+<Window x:Class="NightShift.App.SlimWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:core="clr-namespace:NightShift.Core;assembly=NightShift.Core"
+        Title="Night Shift · slim" Width="{x:Static core:SlimPlacement.CatSize}" Height="{x:Static core:SlimPlacement.CatSize}" WindowStyle="None"
+        AllowsTransparency="True" Background="Transparent" Foreground="{DynamicResource Ink}"
+        FontFamily="Segoe UI" FontSize="13" ResizeMode="NoResize" ShowInTaskbar="False"
+        ShowActivated="False" Topmost="True" WindowStartupLocation="Manual"
+        UseLayoutRounding="True" PreviewKeyDown="SlimKeyDown" Closing="SlimClosing">
+  <Window.Resources>
+    <Style x:Key="SlimButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+      <Setter Property="Padding" Value="10,8"/><Setter Property="FontSize" Value="13"/>
+    </Style>
+    <Style x:Key="SlimCaption" TargetType="TextBlock" BasedOn="{StaticResource Caption}">
+      <Setter Property="FontSize" Value="12"/><Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+    <Style x:Key="SlimProvider" TargetType="Button" BasedOn="{StaticResource SlimButton}">
+      <Setter Property="MinHeight" Value="38"/><Setter Property="FontWeight" Value="Normal"/>
+      <Style.Triggers><DataTrigger Binding="{Binding CanSwitchProvider}" Value="False"><Setter Property="IsEnabled" Value="False"/></DataTrigger></Style.Triggers>
+    </Style>
+  </Window.Resources>
+  <Grid>
+    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+    <Button x:Name="CatButton" Width="{x:Static core:SlimPlacement.CatSize}" Height="{x:Static core:SlimPlacement.CatSize}" HorizontalAlignment="Left" Padding="0"
+            Background="#AA666A70" BorderBrush="#40FFFFFF" BorderThickness="1" Click="CatClick" PreviewMouseLeftButtonDown="CatMouseDown"
+            PreviewMouseMove="CatMouseMove" PreviewMouseLeftButtonUp="CatMouseUp"
+            ToolTip="Night Shift · arraste para mover; clique para acompanhar"
+            AutomationProperties.Name="Abrir painel Night Shift">
+      <Button.Template><ControlTemplate TargetType="Button">
+        <Border x:Name="CatButtonBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="16"><ContentPresenter/>
+        </Border><ControlTemplate.Triggers><Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="CatButtonBorder" Property="BorderBrush" Value="{DynamicResource Mint}"/><Setter TargetName="CatButtonBorder" Property="BorderThickness" Value="2"/></Trigger></ControlTemplate.Triggers>
+      </ControlTemplate></Button.Template>
+      <Image Source="/NightShift;component/Assets/night-shift.png" Width="54" Height="54" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False"/>
+    </Button>
+    <Border x:Name="CompactPanel" Grid.Row="1" Visibility="Collapsed" CornerRadius="12"
+            Background="{DynamicResource Bg}" BorderBrush="{DynamicResource Line}" BorderThickness="1"
+            Padding="14" KeyboardNavigation.TabNavigation="Cycle">
+      <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel>
+          <Grid Margin="0,0,0,12"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+            <StackPanel><TextBlock Text="Night Shift" FontSize="17" FontWeight="SemiBold"/><TextBlock Text="{Binding ProviderLabel}" Style="{StaticResource SlimCaption}"/></StackPanel>
+            <Button Grid.Column="1" Content="×" Style="{StaticResource SlimButton}" Click="CollapseClick" ToolTip="Recolher (Esc)" AutomationProperties.Name="Recolher painel"/>
+          </Grid>
+          <UniformGrid Columns="2" Margin="0,0,0,10">
+            <Button x:Name="CodexProvider" Content="Codex" Tag="Codex" Click="ProviderClick" ToolTip="{Binding ProviderSwitchHint}" Margin="0,0,4,0">
+              <Button.Style><Style TargetType="Button" BasedOn="{StaticResource SlimProvider}"><Style.Triggers>
+                <DataTrigger Binding="{Binding Provider}" Value="{x:Static core:AgentProvider.Codex}"><Setter Property="BorderBrush" Value="{DynamicResource Mint}"/><Setter Property="BorderThickness" Value="2"/><Setter Property="FontWeight" Value="SemiBold"/></DataTrigger>
+              </Style.Triggers></Style></Button.Style>
+            </Button>
+            <Button x:Name="ClaudeProvider" Content="Claude" Tag="Claude" Click="ProviderClick" ToolTip="{Binding ProviderSwitchHint}" Margin="4,0,0,0">
+              <Button.Style><Style TargetType="Button" BasedOn="{StaticResource SlimProvider}"><Style.Triggers>
+                <DataTrigger Binding="{Binding Provider}" Value="{x:Static core:AgentProvider.Claude}"><Setter Property="BorderBrush" Value="{DynamicResource Mint}"/><Setter Property="BorderThickness" Value="2"/><Setter Property="FontWeight" Value="SemiBold"/></DataTrigger>
+              </Style.Triggers></Style></Button.Style>
+            </Button>
+          </UniformGrid>
+          <TextBlock Text="Origem da sessão" Style="{StaticResource SlimCaption}" Margin="0,0,0,5"/>
+          <ComboBox x:Name="PlatformSelector" ItemsSource="{Binding Platforms}" SelectedValuePath="Value"
+                    SelectedValue="{Binding Platform}" IsEnabled="{Binding CanChangePlatform}" FontSize="13" MinHeight="38"/>
+          <Grid Margin="0,10,0,8"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="8"/><ColumnDefinition/></Grid.ColumnDefinitions>
+            <Button Content="{Binding ConnectLabel}" IsEnabled="{Binding CanConnect}" Style="{StaticResource SlimButton}" Click="ConnectClick"/>
+            <Button Grid.Column="2" Content="Atualizar" IsEnabled="{Binding CanRefreshLive}" Style="{StaticResource SlimButton}" Click="RefreshClick"/>
+          </Grid>
+          <Expander Header="Opções de conexão" Foreground="{DynamicResource Muted}" Margin="0,0,0,10">
+            <StackPanel Margin="0,8,0,0">
+              <TextBlock Text="Pasta do projeto (opcional para listar todas)" Style="{StaticResource SlimCaption}"/>
+              <TextBox Text="{Binding ProjectPath,UpdateSourceTrigger=LostFocus}" IsEnabled="{Binding CanChangeProject}" FontSize="12" Padding="8" Margin="0,5,0,8"/>
+              <CheckBox Content="Listar todos os projetos" IsChecked="{Binding AllProjects}" FontSize="12" Margin="0,0,0,8"/>
+              <StackPanel Visibility="{Binding IsSharedPlatform,Converter={StaticResource VisibleIf}}">
+                <TextBlock Text="{Binding IntegrationDetails}" Style="{StaticResource SlimCaption}"/>
+                <StackPanel Visibility="{Binding SlimUsesCodexSharedEndpoint,Converter={StaticResource VisibleIf}}"><TextBlock Text="Endpoint Codex (padrão se vazio)" Style="{StaticResource SlimCaption}" Margin="0,7,0,4"/>
+                <TextBox Text="{Binding SharedEndpoint,UpdateSourceTrigger=LostFocus}" IsEnabled="{Binding CanChangePlatform}" Padding="8" FontSize="12"/></StackPanel>
+              </StackPanel>
+              <TextBlock Text="Codex CLI" Style="{StaticResource SlimCaption}" Margin="0,8,0,4"/>
+              <TextBox Text="{Binding CodexPath,UpdateSourceTrigger=LostFocus}" IsEnabled="{Binding CanChangePlatform}" Padding="8" FontSize="12"/>
+              <TextBlock Text="Claude Code" Style="{StaticResource SlimCaption}" Margin="0,8,0,4"/>
+              <TextBox Text="{Binding ClaudePath,UpdateSourceTrigger=LostFocus}" IsEnabled="{Binding CanChangePlatform}" Padding="8" FontSize="12"/>
+            </StackPanel>
+          </Expander>
+          <TextBlock Text="Sessões ao vivo" FontWeight="SemiBold" Margin="0,0,0,6"/>
+          <TextBlock Text="Nenhuma sessão listada. Escolha uma origem externa e conecte ou atualize."
+                     Style="{StaticResource SlimCaption}" Visibility="{Binding IsLiveEmpty,Converter={StaticResource VisibleIf}}" Margin="0,0,0,8"/>
+          <ListBox x:Name="LiveList" ItemsSource="{Binding LiveSessions}" MaxHeight="160">
+            <ListBox.ItemTemplate><DataTemplate>
+              <Border BorderBrush="{DynamicResource Line}" BorderThickness="0,0,0,1" Padding="0,7">
+                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                  <StackPanel Margin="0,0,8,0"><TextBlock Text="{Binding DisplayTitle}" TextTrimming="CharacterEllipsis"/><TextBlock Text="{Binding SourceLabel}" Style="{StaticResource SlimCaption}"/><TextBlock Text="{Binding LiveLabel}" Style="{StaticResource SlimCaption}"/><TextBlock Text="{Binding ProjectPath}" Style="{StaticResource SlimCaption}" TextTrimming="CharacterEllipsis" MaxHeight="32"/></StackPanel>
+                  <Button Grid.Column="1" Content="Vincular" Tag="{Binding}" Click="LinkClick" Style="{StaticResource SlimButton}"
+                          IsEnabled="{Binding DataContext.CanRefreshLive,RelativeSource={RelativeSource AncestorType=Window}}"/>
+                </Grid>
+              </Border>
+            </DataTemplate></ListBox.ItemTemplate>
+          </ListBox>
+          <Border Background="{DynamicResource Surface}" CornerRadius="8" Padding="10" Margin="0,12,0,10">
+            <StackPanel><TextBlock Text="{Binding ConversationTitle}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+              <TextBlock Text="{Binding Status}" TextWrapping="Wrap" Margin="0,4,0,3"/>
+              <TextBlock Text="{Binding ConnectionLabel}" Style="{StaticResource SlimCaption}"/><TextBlock Text="{Binding CurrentThreadId}" Style="{StaticResource SlimCaption}" TextTrimming="CharacterEllipsis"/>
+              <TextBlock Text="{Binding ShiftLabel}" Style="{StaticResource SlimCaption}"/>
+              <TextBlock Text="{Binding RetryLabel}" Style="{StaticResource SlimCaption}" Visibility="{Binding HasQuotaNotice,Converter={StaticResource VisibleIf}}"/>
+            </StackPanel>
+          </Border>
+          <TextBlock Text="{Binding SlimControlHint}" Style="{StaticResource SlimCaption}" Margin="0,0,0,10"/>
+          <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+            <TextBlock Text="Duração do turno" VerticalAlignment="Center"/>
+            <ComboBox Grid.Column="1" ItemsSource="{Binding HourOptions}" SelectedItem="{Binding ShiftHours}" IsEnabled="{Binding SlimCanEditDuration}" FontSize="13" MinHeight="36" ToolTip="Horas"/>
+          </Grid>
+          <CheckBox x:Name="NightToggle" Content="Night Shift" IsChecked="{Binding NightShiftEnabled,Mode=OneWay}"
+                    IsEnabled="{Binding SlimCanSetNightShift}" Click="NightClick" FontSize="13" Margin="0,12,0,8"/>
+          <UniformGrid Columns="2" Margin="0,0,0,8">
+            <Button Content="Continuar" IsEnabled="{Binding SlimCanContinue}" Click="ContinueClick" Style="{StaticResource SlimButton}" Margin="0,0,4,0"/>
+            <Button Content="Parar" IsEnabled="{Binding SlimCanStop}" Click="StopClick" Style="{StaticResource SlimButton}" Margin="4,0,0,0"/>
+          </UniformGrid>
+          <Button x:Name="PendingButton" Content="Permissão pendente" IsEnabled="{Binding HasPending}" Click="PendingClick" Style="{StaticResource SlimButton}" Margin="0,0,0,8"/>
+          <TextBlock Text="{Binding PendingLabel}" Style="{StaticResource SlimCaption}" Visibility="{Binding HasPending,Converter={StaticResource VisibleIf}}" Margin="0,0,0,8"/>
+          <Button Content="Abrir sessão de origem" IsEnabled="{Binding CanOpenOrigin}" Click="OpenOriginClick" Style="{StaticResource SlimButton}" Visibility="{Binding IsReadOnlySession,Converter={StaticResource VisibleIf}}" Margin="0,0,0,8"/>
+          <TextBlock Text="{Binding Notice}" TextWrapping="Wrap" Foreground="{DynamicResource Ink}" Margin="0,0,0,10" Visibility="{Binding HasNotice,Converter={StaticResource VisibleIf}}"/>
+          <Button Content="Voltar ao aplicativo" Click="ReturnClick" Style="{StaticResource SlimButton}"/>
+        </StackPanel>
+      </ScrollViewer>
+    </Border>
+  </Grid>
+</Window>

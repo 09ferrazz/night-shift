@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk">
+ <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0-windows</TargetFramework><UseWPF>true</UseWPF><EnableWindowsTargeting>true</EnableWindowsTargeting></PropertyGroup>
+ <ItemGroup><ProjectReference Include="../../src/NightShift.App/NightShift.App.csproj"/><Content Include="../../src/NightShift.App/App.xaml" Link="Theme.xaml" CopyToOutputDirectory="PreserveNewest"/></ItemGroup>
+</Project>
