@@ -2,26 +2,29 @@
 
 # Night Shift
 
-**Codex and Claude Code sessions in a native Windows app.**
+**You hit the limit. Your work does not have to end there.**
 
-Your project keeps going. You rest.
+Night Shift is a Windows app that **automatically continues tasks interrupted by Codex and Claude Code usage limits**. It monitors the interruption, waits for availability to return, and continues the task while your shift is active — so you do not have to come back just to ask the AI to continue.
 
-Night Shift brings chat, history, permissions and quota monitoring into a local interface. For managed sessions, a night shift can continue a task interrupted by a quota limit when the agent becomes available again.
+Automatic continuation works in **supported managed sessions**, started or resumed through Night Shift. Keep the app open and your PC on and connected. External sessions have their own rules, explained below.
 
 **Version 0.7.1 · Windows 10/11 x64 · WPF · .NET 10**
 
 [Install (PT-BR)](docs/INSTALL.md) · [Full guide (PT-BR)](docs/USER-GUIDE.pt-BR.md) · [Compatibility (PT-BR)](docs/COMPATIBILITY.md) · [Português](README.md)
 
-## What you get
+## Limit → wait → continue
 
-- **Two providers:** choose Codex or Claude Code at the top of the app.
-- **One place to monitor:** chat, sessions, activity and agent-reported limits.
-- **Night shifts:** continuation after quota limits in supported managed sessions.
-- **Slim mode:** a floating cat opens compact controls for the same session.
-- **Preserved context:** separate preferences, drafts, attachments and caches for each provider.
-- **Provider identity:** blue for Codex, warm tones for Claude; independent light/dark modes.
+1. **A limit interrupts your task.** With the shift enabled, Night Shift identifies the interruption caused by a usage limit.
+2. **The app waits.** It monitors provider availability during your configured shift period.
+3. **Work continues.** Once availability returns, it automatically requests continuation in the supported managed session.
 
-You can switch providers only while the shift is inactive. Switching provider, platform or theme does not send a task.
+![Illustrated monitoring and continuation flow](docs/assets/how-it-works.en.png)
+
+*Explanatory illustration, not a screenshot of the Windows interface.*
+
+Night Shift **respects provider limits**: continuation depends on availability. Completed tasks, errors, questions and refusals are handled separately; permissions still require your decision. Stopping or closing the app cancels pending continuation.
+
+“Keep computer awake” prevents sleep while monitoring; it cannot wake an already sleeping PC.
 
 ## Get started
 
@@ -29,40 +32,22 @@ You can switch providers only while the shift is inactive. Switching provider, p
 2. Extract the entire ZIP into a stable folder and run `NightShift.exe`.
 3. Install and authenticate the chosen provider's CLI: Codex CLI or local Claude Code.
 4. Choose the provider, connect and select your project folder.
-5. Send your task. Enable the shift to monitor interruptions caused by quota limits.
+5. Enable the shift, set its duration and send your task in the managed session. If a usage limit interrupts work during that period, Night Shift can continue it automatically once availability returns.
 
 The package includes the .NET runtime; the SDK is needed only for development. Claude Code requires native version **2.1.234 or later**.
 
 Read [installation and updates](docs/INSTALL.md) before replacing an existing installation.
 
-## How a shift works
+## Tools to support your shift
 
-![Illustrated monitoring and continuation flow](docs/assets/how-it-works.en.png)
+These features help you set up your task and keep an eye on the shift:
 
-*Explanatory illustration, not a screenshot of the Windows interface.*
+- **Slim mode:** a floating cat gives you compact controls for the same session.
+- **Built-in chat:** send your task and monitor history, activity, limits and permission requests.
+- **Codex and Claude Code:** choose your provider at the top, with separate preferences, drafts, attachments and caches.
+- **Provider themes:** blue for Codex, warm tones for Claude, with independent light/dark modes.
 
-The app distinguishes limits, completion, errors, questions and refusals. A shift does not turn a completed task into new work or answer permission requests for you.
-
-| Session type | Monitoring | Continuation after a quota limit |
-| --- | --- | --- |
-| Managed Codex CLI | Chat, history, permissions and limits | Automatic after checking availability |
-| Managed Claude Code | Structured protocol and supported capabilities | Automatic only for a task interrupted by a quota limit |
-| Shared Codex | Local backend accessible to both Night Shift and the client | Revalidation and an explicit **Continue task** click |
-| External Claude Code | Observation of status and pending requests | Handled in the original client; no automatic control |
-
-**Your PC must stay on and connected.** “Keep computer awake” prevents sleep while monitoring; it cannot wake an already sleeping PC. Stopping or closing cancels pending continuation.
-
-## Compatibility boundaries
-
-**Codex CLI:** must be installed and authenticated. Managed mode uses the official protocol; Codex retains its credentials and policies.
-
-**Codex Desktop / VS Code:** experimental connectors for an already accessible shared local app-server. Selecting a platform does not detect the client or grant access to private backends. The Windows socket path remains unvalidated.
-
-**Claude Code:** local sessions managed through the structured protocol. There is no automatic control of Claude Desktop, regular chat or Cowork.
-
-**External Claude:** discovery depends on commands supported by the installed CLI. For supported background sessions, **Attach** opens the native terminal with `claude attach <id>`. Interactive sessions may require a response in their original terminal. The app does not write to live transcripts or start concurrent copies. Resuming that history as a managed session requires the previous process to end and explicit confirmation.
-
-See versions, mechanisms and restrictions in [COMPATIBILITY.md (PT-BR)](docs/COMPATIBILITY.md).
+You can switch providers only while the shift is inactive. Switching provider, platform or theme does not send a task.
 
 ## One session, two ways to monitor
 
@@ -73,6 +58,27 @@ See versions, mechanisms and restrictions in [COMPATIBILITY.md (PT-BR)](docs/COM
 The main window and slim mode use the same engine and session. The compact panel lets you choose provider/platform when available, connect, refresh sessions, attach a session and monitor status and duration.
 
 **Back to app** reopens the main window. Slim mode does not start a second task.
+
+## Where automatic continuation works
+
+Automatic continuation is the app’s focus, but support depends on the session type:
+
+| Session type | Monitoring | Continuation after a quota limit |
+| --- | --- | --- |
+| Managed Codex CLI | Chat, history, permissions and limits | Automatic after checking availability |
+| Managed Claude Code | Structured protocol and supported capabilities | Automatic only for a task interrupted by a quota limit |
+| Shared Codex | Local backend accessible to both Night Shift and the client | Revalidation and an explicit **Continue task** click |
+| External Claude Code | Observation of status and pending requests | Handled in the original client; no automatic control |
+
+**Codex CLI:** must be installed and authenticated. Managed mode uses the official protocol; Codex retains its credentials and policies.
+
+**Codex Desktop / VS Code:** experimental connectors for an already accessible shared local app-server. Selecting a platform does not detect the client or grant access to private backends. The Windows socket path remains unvalidated.
+
+**Claude Code:** local sessions managed through the structured protocol. There is no automatic control of Claude Desktop, regular chat or Cowork.
+
+**External Claude:** discovery depends on commands supported by the installed CLI. For supported background sessions, **Attach** opens the native terminal with `claude attach <id>`. Interactive sessions may require a response in their original terminal. The app does not write to live transcripts or start concurrent copies. Resuming that history as a managed session requires the previous process to end and explicit confirmation.
+
+See versions, mechanisms and restrictions in [COMPATIBILITY.md (PT-BR)](docs/COMPATIBILITY.md).
 
 ## Chat and data
 
